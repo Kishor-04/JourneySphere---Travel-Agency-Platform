@@ -1,0 +1,104 @@
+<%- include('partials/header') %>
+
+<div class="dashboard-container">
+    <header class="hero-section">
+        <h1>Welcome <%= user.name %>!</h1>
+        <p>Manage your bookings and discover new destinations</p>
+    </header>
+
+    <!-- My Bookings Section -->
+    <section class="bookings-section">
+        <h2>My Bookings (<%= bookings.length %>)</h2>
+        
+        <% if (bookings.length === 0) { %>
+            <div class="empty-state">
+                <p>You haven't made any bookings yet. Explore our packages below!</p>
+            </div>
+        <% } else { %>
+            <div class="bookings-list">
+                <% bookings.forEach(booking => { %>
+                    <div class="booking-card">
+                        <div class="booking-header">
+                            <h3><%= booking.packageTitle %></h3>
+                            <span class="booking-date">Booked on: <%= new Date(booking.createdAt).toLocaleDateString() %></span>
+                        </div>
+                        <div class="booking-details">
+                            <p><strong>Name:</strong> <%= booking.name %></p>
+                            <p><strong>Email:</strong> <%= booking.userEmail %></p>
+                            <p><strong>Phone:</strong> <%= booking.phone %></p>
+                            <p><strong>Travellers:</strong> <%= booking.travellers %></p>
+                            <p><strong>Start Date:</strong> <%= new Date(booking.startDate).toLocaleDateString() %></p>
+                            <% if (booking.packageId) { %>
+                                <p><strong>Package Price:</strong> ₹<%= (booking.packageId.price * booking.travellers).toLocaleString() %></p>
+                            <% } %>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        <% } %>
+    </section>
+
+    <!-- Search Packages -->
+    <section class="search-section">
+        <h2>Find More Destinations</h2>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search by destination, title..." />
+            <button onclick="searchPackages()" class="search-btn">Search</button>
+        </div>
+    </section>
+
+    <!-- Available Packages -->
+    <section class="packages-section">
+        <h2>Available Packages (<span id="packageCount"><%= packages.length %></span>)</h2>
+        
+        <div class="packages-grid" id="packagesGrid">
+            <% packages.forEach(pkg => { %>
+                <div class="destination-card" data-title="<%= pkg.title.toLowerCase() %>" data-location="<%= pkg.location.toLowerCase() %>">
+                    <% if (pkg.imageUrl) { %>
+                        <div class="card-image" style="background-image: url('<%= pkg.imageUrl %>');"></div>
+                    <% } %>
+                    <div class="card-content">
+                        <h3><%= pkg.title %></h3>
+                        <p class="description"><%= pkg.description %></p>
+                        <div class="package-details">
+                            <span class="location">📍 <%= pkg.location %></span>
+                            <span class="duration">⏱️ <%= pkg.days %> days</span>
+                            <span class="price">💰 ₹<%= pkg.price.toLocaleString() %></span>
+                        </div>
+                        <a href="/booking-form/<%= pkg._id %>" class="book-now-btn">Book Now</a>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    </section>
+</div>
+
+<script>
+    function searchPackages() {
+        const searchInput = document.getElementById('searchInput').value.toLowerCase();
+        const cards = document.querySelectorAll('.destination-card');
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            const title = card.dataset.title;
+            const location = card.dataset.location;
+            
+            if (title.includes(searchInput) || location.includes(searchInput) || searchInput === '') {
+                card.style.display = 'block';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        document.getElementById('packageCount').textContent = visibleCount;
+    }
+
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            searchPackages();
+        }
+    });
+</script>
+
+<%- include('partials/footer') %>

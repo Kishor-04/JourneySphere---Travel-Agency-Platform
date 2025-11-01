@@ -1,0 +1,39 @@
+<%- include('partials/header') %>
+
+<div class="login-container">
+    <div class="login-form">
+        <h2>Create Your JourneySphere Account</h2>
+        <p>Join us to discover amazing travel experiences</p>
+        
+        <% if (error) { %>
+            <div class="error-message">
+                <%= error %>
+            </div>
+        <% } %>
+        
+        <form method="POST" action="/signup">
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required minlength="8">
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required>
+            </div>
+            <button type="submit" class="login-btn">Sign Up</button>
+            <div class="form-links">
+                <a href="/login" class="create-account">Already have an account? Login</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<%- include('partials/footer') %>

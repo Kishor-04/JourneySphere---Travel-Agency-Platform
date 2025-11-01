@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/styles.css">
+    <title><%= title || 'JourneySphere - Travel Booking' %></title>
+</head>
+<body>
+    <nav>
+        <ul class="nav-list">
+            <li class="journeySphere"><a href="/">JourneySphere</a></li>
+            
+            <% if (user) { %>
+                <!-- Logged in user menu - Hide general Dashboard, show user-specific dashboard -->
+                <% if (isAdmin) { %>
+                    <li><a href="/admin">Admin Panel</a></li>
+                <% } else { %>
+                    <li><a href="/user-dashboard">My Dashboard</a></li>
+                <% } %>
+                <li><a href="/about">About</a></li>
+                <li><a href="/contact">Contact</a></li>
+                <li><a href="/help">Help</a></li>
+                <li class="user-info">
+                    <span>Welcome, <%= user.name %>!</span>
+                </li>
+                <li><a href="/logout" class="logout-btn">Logout</a></li>
+            <% } else { %>
+                <!-- Guest menu -->
+                <li><a href="/">Dashboard</a></li>
+                <% if (typeof currentPage === 'undefined' || currentPage !== 'login') { %>
+                    <li><a href="/login">Login</a></li>
+                <% } %>
+                <% if (typeof currentPage === 'undefined' || currentPage !== 'signup') { %>
+                    <li><a href="/signup">Sign Up</a></li>
+                <% } %>
+                <% if (typeof currentPage === 'undefined' || currentPage !== 'admin-login') { %>
+                    <li><a href="/admin-login">Admin</a></li>
+                <% } %>
+                <li><a href="/about">About</a></li>
+                <li><a href="/contact">Contact</a></li>
+                <li><a href="/help">Help</a></li>
+            <% } %>
+        </ul>
+    </nav>

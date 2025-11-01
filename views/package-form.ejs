@@ -1,0 +1,61 @@
+<%- include('partials/header') %>
+
+<div class="form-container">
+    <div class="form-box">
+        <h2><%= package ? 'Edit Package' : 'Add New Package' %></h2>
+        <p>Fill in the package details below</p>
+        
+        <% if (error) { %>
+            <div class="error-message">
+                <%= error %>
+            </div>
+        <% } %>
+        
+        <form method="POST" action="/package-form">
+            <% if (package) { %>
+                <input type="hidden" name="id" value="<%= package._id %>">
+            <% } %>
+            
+            <div class="form-group">
+                <label for="title">Package Title *</label>
+                <input type="text" id="title" name="title" value="<%= package ? package.title : '' %>" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="description">Description *</label>
+                <textarea id="description" name="description" rows="4" required><%= package ? package.description : '' %></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="location">Location *</label>
+                <input type="text" id="location" name="location" value="<%= package ? package.location : '' %>" placeholder="e.g., Goa, India" required>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="days">Duration (Days) *</label>
+                    <input type="number" id="days" name="days" value="<%= package ? package.days : '' %>" min="1" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="price">Price (₹) *</label>
+                    <input type="number" id="price" name="price" value="<%= package ? package.price : '' %>" min="0" step="0.01" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="imageUrl">Image URL</label>
+                <input type="url" id="imageUrl" name="imageUrl" value="<%= package ? package.imageUrl : '' %>" placeholder="https://example.com/image.jpg">
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="submit-btn">
+                    <%= package ? 'Update Package' : 'Create Package' %>
+                </button>
+                <a href="/admin" class="cancel-btn">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<%- include('partials/footer') %>

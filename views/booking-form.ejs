@@ -1,0 +1,77 @@
+<%- include('partials/header') %>
+
+<div class="form-container">
+    <div class="form-box">
+        <h2>Book Your Package</h2>
+        <div class="package-summary">
+            <h3><%= package.title %></h3>
+            <p><%= package.description %></p>
+            <div class="package-info">
+                <span>📍 <%= package.location %></span>
+                <span>⏱️ <%= package.days %> days</span>
+                <span>💰 ₹<%= package.price.toLocaleString() %> per person</span>
+            </div>
+        </div>
+        
+        <% if (error) { %>
+            <div class="error-message">
+                <%= error %>
+            </div>
+        <% } %>
+        
+        <form method="POST" action="/booking-form/<%= package._id %>">
+            <div class="form-group">
+                <label for="name">Full Name *</label>
+                <input type="text" id="name" name="name" value="<%= user.name %>" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email" value="<%= user.email %>" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">Phone Number *</label>
+                <input type="tel" id="phone" name="phone" placeholder="10-digit phone number" pattern="[0-9]{10,15}" required>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="travellers">Number of Travellers *</label>
+                    <input type="number" id="travellers" name="travellers" value="1" min="1" max="20" required onchange="updateTotal()">
+                </div>
+                
+                <div class="form-group">
+                    <label for="startDate">Start Date *</label>
+                    <input type="date" id="startDate" name="startDate" min="<%= new Date().toISOString().split('T')[0] %>" required>
+                </div>
+            </div>
+            
+            <div class="total-price" data-price="<%= package.price %>">
+                <h3>Total Price: ₹<span id="totalPrice"><%= package.price.toLocaleString() %></span></h3>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="submit-btn">Confirm Booking</button>
+                <a href="/user-dashboard" class="cancel-btn">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function updateTotal() {
+        const pricePerPerson = parseInt(document.querySelector('.total-price').getAttribute('data-price'));
+        const travellers = parseInt(document.getElementById('travellers').value) || 1;
+        const total = pricePerPerson * travellers;
+        document.getElementById('totalPrice').textContent = total.toLocaleString();
+    }
+    
+    // Set minimum date to today
+    document.addEventListener('DOMContentLoaded', function() {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('startDate').setAttribute('min', today);
+    });
+</script>
+
+<%- include('partials/footer') %>

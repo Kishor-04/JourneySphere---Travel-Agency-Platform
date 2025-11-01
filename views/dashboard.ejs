@@ -1,0 +1,102 @@
+<%- include('partials/header') %>
+
+<div class="dashboard-container">
+    <header class="hero-section">
+        <h1>Welcome to JourneySphere</h1>
+        <p>Discover Amazing Travel Packages Around the World</p>
+    </header>
+
+    <section class="search-section">
+        <h2>Find Your Perfect Destination</h2>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search by destination, title, or country..." />
+            <select id="filterType">
+                <option value="all">All Fields</option>
+                <option value="title">Title</option>
+                <option value="location">Location</option>
+                <option value="price">Max Price</option>
+            </select>
+            <button onclick="searchPackages()" class="search-btn">Search</button>
+        </div>
+    </section>
+
+    <section class="packages-section">
+        <h2>Available Packages (<span id="packageCount"><%= packages.length %></span>)</h2>
+        
+        <% if (packages.length === 0) { %>
+            <div class="empty-state">
+                <p>No packages available at the moment. Check back soon!</p>
+            </div>
+        <% } else { %>
+            <div class="packages-grid" id="packagesGrid">
+                <% packages.forEach(pkg => { %>
+                    <div class="destination-card" data-title="<%= pkg.title.toLowerCase() %>" data-location="<%= pkg.location.toLowerCase() %>" data-price="<%= pkg.price %>">
+                        <% if (pkg.imageUrl) { %>
+                            <div class="card-image" style="background-image: url('<%= pkg.imageUrl %>');"></div>
+                        <% } %>
+                        <div class="card-content">
+                            <h3><%= pkg.title %></h3>
+                            <p class="description"><%= pkg.description %></p>
+                            <div class="package-details">
+                                <span class="location">📍 <%= pkg.location %></span>
+                                <span class="duration">⏱️ <%= pkg.days %> days</span>
+                                <span class="price">💰 ₹<%= pkg.price.toLocaleString() %></span>
+                            </div>
+                            <% if (user) { %>
+                                <a href="/booking-form/<%= pkg._id %>" class="book-now-btn">Book Now</a>
+                            <% } else { %>
+                                <a href="/login?redirect=/booking-form/<%= pkg._id %>" class="book-now-btn">Login to Book</a>
+                            <% } %>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        <% } %>
+    </section>
+</div>
+
+<script>
+    function searchPackages() {
+        const searchInput = document.getElementById('searchInput').value.toLowerCase();
+        const filterType = document.getElementById('filterType').value;
+        const cards = document.querySelectorAll('.destination-card');
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            const title = card.dataset.title;
+            const location = card.dataset.location;
+            const price = parseFloat(card.dataset.price);
+            
+            let match = false;
+            
+            if (filterType === 'all') {
+                match = title.includes(searchInput) || location.includes(searchInput);
+            } else if (filterType === 'title') {
+                match = title.includes(searchInput);
+            } else if (filterType === 'location') {
+                match = location.includes(searchInput);
+            } else if (filterType === 'price') {
+                const maxPrice = parseFloat(searchInput);
+                match = !isNaN(maxPrice) && price <= maxPrice;
+            }
+            
+            if (match || searchInput === '') {
+                card.style.display = 'block';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        document.getElementById('packageCount').textContent = visibleCount;
+    }
+
+    // Allow search on Enter key
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            searchPackages();
+        }
+    });
+</script>
+
+<%- include('partials/footer') %>

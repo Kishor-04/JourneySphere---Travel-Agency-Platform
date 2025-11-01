@@ -1,0 +1,31 @@
+<%- include('partials/header') %>
+
+<div class="login-container">
+    <div class="login-form">
+        <h2>Admin Login</h2>
+        <p>Access the admin dashboard to manage packages and bookings</p>
+        
+        <% if (error) { %>
+            <div class="error-message">
+                <%= error %>
+            </div>
+        <% } %>
+        
+        <form method="POST" action="/admin-login">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="login-btn">Login as Admin</button>
+            <div class="form-links">
+                <a href="/login" class="create-account">User Login</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<%- include('partials/footer') %>

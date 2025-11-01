@@ -1,0 +1,15 @@
+<%- include('partials/header') %>
+
+<div class="error-container">
+    <div class="error-box">
+        <h1>⚠️ <%= error.status || 500 %></h1>
+        <h2><%= message || 'Something went wrong' %></h2>
+        <p>We're sorry, but something unexpected happened.</p>
+        <div class="error-actions">
+            <a href="/" class="error-btn">Go to Home</a>
+            <a href="javascript:history.back()" class="error-btn secondary">Go Back</a>
+        </div>
+    </div>
+</div>
+
+<%- include('partials/footer') %>
