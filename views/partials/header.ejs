@@ -7,10 +7,14 @@
     <title><%= title || 'JourneySphere - Travel Booking' %></title>
 </head>
 <body>
-    <nav>
-        <ul class="nav-list">
-            <li class="journeySphere"><a href="/">JourneySphere</a></li>
-            
+    <nav class="site-nav" role="navigation">
+        <a class="brand" href="/">JourneySphere</a>
+        <button class="nav-toggle" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
+        <ul class="nav-list" id="navMenu">
             <% if (user) { %>
                 <!-- Logged in user menu - Hide general Dashboard, show user-specific dashboard -->
                 <% if (isAdmin) { %>

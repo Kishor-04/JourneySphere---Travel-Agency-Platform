@@ -28,7 +28,7 @@
                 <p>No packages available at the moment. Check back soon!</p>
             </div>
         <% } else { %>
-            <div class="packages-grid" id="packagesGrid">
+            <div class="packages-flex" id="packagesGrid">
                 <% packages.forEach(pkg => { %>
                     <div class="destination-card" data-title="<%= pkg.title.toLowerCase() %>" data-location="<%= pkg.location.toLowerCase() %>" data-price="<%= pkg.price %>">
                         <% if (pkg.imageUrl) { %>
