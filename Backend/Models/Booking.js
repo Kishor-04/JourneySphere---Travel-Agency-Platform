@@ -9,6 +9,15 @@ const bookingSchema = new mongoose.Schema({
   phone: { type: String, required: true },
   travellers: { type: Number, required: true, min: 1 },
   startDate: { type: Date, required: true },
+  totalAmount: { type: Number, required: true, min: 0 },
+  paymentStatus: { 
+    type: String, 
+    enum: ['pending', 'completed', 'failed', 'refunded'], 
+    default: 'pending' 
+  },
+  razorpayOrderId: { type: String },
+  razorpayPaymentId: { type: String },
+  razorpaySignature: { type: String },
   createdAt: { type: Date, default: Date.now }
 });
 

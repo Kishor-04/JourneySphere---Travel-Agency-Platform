@@ -28,8 +28,15 @@
                             <p><strong>Phone:</strong> <%= booking.phone %></p>
                             <p><strong>Travellers:</strong> <%= booking.travellers %></p>
                             <p><strong>Start Date:</strong> <%= new Date(booking.startDate).toLocaleDateString() %></p>
-                            <% if (booking.packageId) { %>
-                                <p><strong>Package Price:</strong> ₹<%= (booking.packageId.price * booking.travellers).toLocaleString() %></p>
+                            <p><strong>Total Amount:</strong> ₹<%= booking.totalAmount ? booking.totalAmount.toLocaleString() : (booking.packageId ? (booking.packageId.price * booking.travellers).toLocaleString() : 'N/A') %></p>
+                            <p>
+                                <strong>Payment Status:</strong> 
+                                <span class="payment-status payment-status-<%= booking.paymentStatus || 'pending' %>">
+                                    <%= booking.paymentStatus ? booking.paymentStatus.charAt(0).toUpperCase() + booking.paymentStatus.slice(1) : 'Pending' %>
+                                </span>
+                            </p>
+                            <% if (booking.razorpayPaymentId) { %>
+                                <p><strong>Payment ID:</strong> <%= booking.razorpayPaymentId %></p>
                             <% } %>
                         </div>
                     </div>
@@ -51,7 +58,7 @@
     <section class="packages-section">
         <h2>Available Packages (<span id="packageCount"><%= packages.length %></span>)</h2>
         
-        <div class="packages-grid" id="packagesGrid">
+        <div class="packages-flex" id="packagesGrid">
             <% packages.forEach(pkg => { %>
                 <div class="destination-card" data-title="<%= pkg.title.toLowerCase() %>" data-location="<%= pkg.location.toLowerCase() %>">
                     <% if (pkg.imageUrl) { %>

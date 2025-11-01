@@ -1,150 +1,232 @@
-<!-- views/admin.ejs -->
 <%- include('partials/header') %>
-<!--
-If you do not have partials/header, replace the include above with the commented block below
-<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Admin Dashboard</title>
-  <link rel="stylesheet" href="/css/admin.css">
-</head>
-<body>
-  <header class="site-header">
-    <div style="max-width:1100px;margin:0 auto;">
-      <strong>JourneySphere — Admin</strong>
+
+<div class="admin-dashboard">
+  <!-- Admin Header with Quick Actions - FULL WIDTH ROW -->
+  <header class="admin-header-modern">
+    <div class="admin-header-content">
+      <div class="admin-title-section">
+        <h1>Admin Dashboard</h1>
+        <p>Welcome back! Here's what's happening with your travel packages today.</p>
+      </div>
+      <div class="admin-quick-actions">
+        <a href="/package-form" class="quick-action-btn primary-action">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M12 5v14M5 12h14"/>
+          </svg>
+          Add Package
+        </a>
+      </div>
     </div>
   </header>
--->
-<link rel="stylesheet" href="/css/admin.css">
 
-<div class="dashboard-container admin-dashboard">
-  <!-- Admin header -->
-  <header class="admin-header">
-    <h1>Admin Dashboard</h1>
-    <p>Manage packages and view all bookings</p>
-  </header>
-
-  <!-- Statistics Section -->
-  <section class="stats-section" aria-label="Statistics">
-    <div class="stat-card" role="article">
-      <h3>Total Packages</h3>
-      <p class="stat-number"><%= stats.totalPackages %></p>
+  <!-- Statistics Grid - HORIZONTAL ROW -->
+  <section class="stats-grid-horizontal">
+    <div class="stat-card-modern stat-primary">
+      <div class="stat-icon">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M20 7h-4l-2-2H6L4 7v10a2 2 0 002 2h12a2 2 0 002-2V7z"/>
+        </svg>
+      </div>
+      <div class="stat-details">
+        <h3 class="stat-label">Total Packages</h3>
+        <p class="stat-value"><%= stats.totalPackages %></p>
+        <span class="stat-subtitle">Active travel packages</span>
+      </div>
     </div>
 
-    <div class="stat-card" role="article">
-      <h3>Total Bookings</h3>
-      <p class="stat-number"><%= stats.totalBookings %></p>
+    <div class="stat-card-modern stat-success">
+      <div class="stat-icon">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+        </svg>
+      </div>
+      <div class="stat-details">
+        <h3 class="stat-label">Total Bookings</h3>
+        <p class="stat-value"><%= stats.totalBookings %></p>
+        <span class="stat-subtitle">Customer reservations</span>
+      </div>
     </div>
 
-    <div class="stat-card" role="article">
-      <h3>Total Revenue</h3>
-      <p class="stat-number">₹<%= stats.totalRevenue.toLocaleString() %></p>
+    <div class="stat-card-modern stat-warning">
+      <div class="stat-icon">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+        </svg>
+      </div>
+      <div class="stat-details">
+        <h3 class="stat-label">Total Revenue</h3>
+        <p class="stat-value">₹<%= stats.totalRevenue.toLocaleString() %></p>
+        <span class="stat-subtitle">All-time earnings</span>
+      </div>
     </div>
   </section>
 
-  <!-- Package Management Section -->
-  <section class="packages-section admin-section" aria-labelledby="packages-heading">
-    <div class="section-header">
-      <h2 id="packages-heading">Manage Packages (<%= packages.length %>)</h2>
-      <a href="/package-form" class="admin-btn primary-btn">+ Add New Package</a>
-    </div>
-
-    <% if (packages.length === 0) { %>
-      <div class="empty-state" role="status">
-        <p>No packages yet. Click "Add New Package" to create one.</p>
+  <!-- Remaining Components - VERTICAL COLUMN -->
+  <div class="admin-content-vertical">
+    <!-- Packages Section -->
+    <section class="admin-section packages-section-modern">
+      <div class="section-header-modern">
+        <div class="section-title">
+          <h2>Manage Packages</h2>
+          <span class="section-badge"><%= packages.length %> total</span>
+        </div>
       </div>
-    <% } else { %>
-      <div class="card-list" aria-live="polite">
-        <% packages.forEach(pkg => { %>
-          <article class="card" aria-label="Package <%= pkg.title %>">
-            <div class="card-row">
-              <div>
-                <h3><%= pkg.title %></h3>
-                <p class="muted"><%= pkg.location %> • <span class="meta"><%= pkg.days %> days</span></p>
+
+      <% if (packages.length === 0) { %>
+        <div class="empty-state-modern">
+          <svg width="64" height="64" fill="none" stroke="#cbd5e0" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M20 7h-4l-2-2H6L4 7v10a2 2 0 002 2h12a2 2 0 002-2V7z"/>
+          </svg>
+          <h3>No Packages Yet</h3>
+          <p>Get started by creating your first travel package.</p>
+          <a href="/package-form" class="empty-state-action">Create Package</a>
+        </div>
+      <% } else { %>
+        <div class="packages-list-vertical">
+          <% packages.forEach(pkg => { %>
+            <article class="package-card-modern">
+              <div class="package-card-header">
+                <div class="package-title-area">
+                  <h3><%= pkg.title %></h3>
+                  <div class="package-meta">
+                    <span class="meta-item">
+                      <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                      </svg>
+                      <%= pkg.location %>
+                    </span>
+                    <span class="meta-item">
+                      <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm4.2 14.2L11 13V7h1.5v5.2l4.5 2.7-.8 1.3z"/>
+                      </svg>
+                      <%= pkg.days %> days
+                    </span>
+                  </div>
+                </div>
+                <div class="package-price-area">
+                  <span class="price-label">₹</span>
+                  <span class="price-value"><%= pkg.price.toLocaleString() %></span>
+                </div>
               </div>
 
-              <div style="text-align:right;">
-                <div class="price">₹<%= pkg.price.toLocaleString() %></div>
-                <div class="muted" style="font-size:0.88rem;">Created: <%= new Date(pkg.createdAt).toLocaleDateString() %></div>
-              </div>
-            </div>
+              <% if (pkg.description) { %>
+                <p class="package-description">
+                  <%= pkg.description.length > 150 ? pkg.description.substring(0, 150) + '...' : pkg.description %>
+                </p>
+              <% } %>
 
-            <% if (pkg.description) { %>
-              <div class="description">
-                <%= pkg.description.length > 220 ? pkg.description.substring(0,220) + '...' : pkg.description %>
+              <div class="package-card-footer">
+                <span class="package-date">
+                  Created: <%= new Date(pkg.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %>
+                </span>
+                <div class="package-actions">
+                  <a href="/package-form/<%= pkg._id %>" class="action-btn edit-action" title="Edit Package">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                  </a>
+                  <form method="POST" action="/package-delete/<%= pkg._id %>" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this package? This action cannot be undone.');">
+                    <button type="submit" class="action-btn delete-action" title="Delete Package">
+                      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                      </svg>
+                    </button>
+                  </form>
+                </div>
               </div>
-            <% } %>
+            </article>
+          <% }); %>
+        </div>
+      <% } %>
+    </section>
 
-            <div class="card-row" style="justify-content:space-between; align-items:center;">
-              <div class="muted">ID: <span class="meta"><%= pkg._id %></span></div>
-              <div class="card-actions">
-                <a href="/package-form/<%= pkg._id %>" class="admin-btn edit-btn" aria-label="Edit <%= pkg.title %>">Edit</a>
-
-                <form method="POST" action="/package-delete/<%= pkg._id %>" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this package?');">
-                  <button type="submit" class="admin-btn delete-btn" aria-label="Delete <%= pkg.title %>">Delete</button>
-                </form>
-              </div>
-            </div>
-          </article>
-        <% }); %>
+    <!-- Bookings Section -->
+    <section class="admin-section bookings-section-modern">
+      <div class="section-header-modern">
+        <div class="section-title">
+          <h2>Recent Bookings</h2>
+          <span class="section-badge"><%= bookings.length %> total</span>
+        </div>
       </div>
-    <% } %>
-  </section>
 
-  <!-- Bookings Section -->
-  <section class="bookings-section admin-section" aria-labelledby="bookings-heading">
-    <div class="section-header">
-      <h2 id="bookings-heading">All Bookings (<%= bookings.length %>)</h2>
-    </div>
-
-    <% if (bookings.length === 0) { %>
-      <div class="empty-state" role="status">
-        <p>No bookings yet.</p>
-      </div>
-    <% } else { %>
-      <div class="card-list" aria-live="polite">
-        <% bookings.forEach(booking => { %>
-          <article class="card" aria-label="Booking for <%= booking.packageTitle %>">
-            <div class="card-row">
-              <div>
-                <strong><%= booking.packageTitle %></strong>
-                <div class="muted" style="margin-top:0.25rem;"><%= booking.name %> • <span class="muted"><%= booking.userEmail %></span></div>
-              </div>
-
-              <div style="text-align:right;">
-                <div class="muted">Travellers: <span class="meta"><%= booking.travellers %></span></div>
-                <div class="muted">Start: <%= new Date(booking.startDate).toLocaleDateString() %></div>
-              </div>
-            </div>
-
-            <div class="card-row" style="justify-content:space-between; align-items:center;">
-              <div class="booking-details">
-                <p class="muted">Phone: <span class="meta"><%= booking.phone %></span></p>
-                <p class="muted">Booked On: <span class="muted"><%= new Date(booking.createdAt).toLocaleDateString() %></span></p>
-              </div>
-
-              <div style="text-align:right;">
-                <% if (booking.packageId && booking.packageId.price) { %>
-                  <div class="revenue">₹<%= (booking.packageId.price * booking.travellers).toLocaleString() %></div>
-                <% } else { %>
-                  <div class="muted">N/A</div>
-                <% } %>
-              </div>
-            </div>
-          </article>
-        <% }); %>
-      </div>
-    <% } %>
-  </section>
-
-  <div class="footer-space" aria-hidden="true"></div>
+      <% if (bookings.length === 0) { %>
+        <div class="empty-state-modern">
+          <svg width="64" height="64" fill="none" stroke="#cbd5e0" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+          </svg>
+          <h3>No Bookings Yet</h3>
+          <p>Customer bookings will appear here.</p>
+        </div>
+      <% } else { %>
+        <div class="bookings-table-wrapper">
+          <table class="bookings-table-modern">
+            <thead>
+              <tr>
+                <th>Customer</th>
+                <th>Package</th>
+                <th>Travellers</th>
+                <th>Start Date</th>
+                <th>Payment</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% bookings.forEach(booking => { %>
+                <tr class="booking-row">
+                  <td>
+                    <div class="customer-info">
+                      <div class="customer-avatar">
+                        <%= booking.name.charAt(0).toUpperCase() %>
+                      </div>
+                      <div class="customer-details">
+                        <div class="customer-name"><%= booking.name %></div>
+                        <div class="customer-email"><%= booking.userEmail %></div>
+                        <div class="customer-phone"><%= booking.phone %></div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="package-info-cell">
+                      <strong><%= booking.packageTitle %></strong>
+                      <span class="booking-date-small">
+                        Booked: <%= new Date(booking.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %>
+                      </span>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="travellers-badge">
+                      <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                      </svg>
+                      <%= booking.travellers %>
+                    </span>
+                  </td>
+                  <td>
+                    <div class="start-date">
+                      <%= new Date(booking.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="payment-badge payment-<%= booking.paymentStatus || 'pending' %>">
+                      <%= booking.paymentStatus ? booking.paymentStatus.charAt(0).toUpperCase() + booking.paymentStatus.slice(1) : 'Pending' %>
+                    </span>
+                    <% if (booking.razorpayPaymentId) { %>
+                      <div class="payment-id">ID: <%= booking.razorpayPaymentId.substring(0, 12) %>...</div>
+                    <% } %>
+                  </td>
+                  <td>
+                    <div class="amount-cell">
+                      ₹<%= booking.totalAmount ? booking.totalAmount.toLocaleString() : (booking.packageId && booking.packageId.price ? (booking.packageId.price * booking.travellers).toLocaleString() : 'N/A') %>
+                    </div>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
+    </section>
+  </div>
 </div>
 
 <%- include('partials/footer') %>
-<!--
-If you replaced header partial above, close body/html here:
-</body>
-</html>
--->

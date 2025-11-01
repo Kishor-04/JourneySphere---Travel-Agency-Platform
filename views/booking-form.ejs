@@ -19,7 +19,7 @@
             </div>
         <% } %>
         
-        <form method="POST" action="/booking-form/<%= package._id %>">
+        <form id="bookingForm">
             <div class="form-group">
                 <label for="name">Full Name *</label>
                 <input type="text" id="name" name="name" value="<%= user.name %>" required>
@@ -47,17 +47,23 @@
                 </div>
             </div>
             
-            <div class="total-price" data-price="<%= package.price %>">
+            <div class="total-price" data-price="<%= package.price %>" data-package-id="<%= package._id %>">
                 <h3>Total Price: ₹<span id="totalPrice"><%= package.price.toLocaleString() %></span></h3>
             </div>
             
             <div class="form-actions">
-                <button type="submit" class="submit-btn">Confirm Booking</button>
+                <button type="submit" class="submit-btn" id="payButton">
+                    <span id="buttonText">Proceed to Payment</span>
+                    <span id="buttonLoader" style="display: none;">Processing...</span>
+                </button>
                 <a href="/user-dashboard" class="cancel-btn">Cancel</a>
             </div>
         </form>
     </div>
 </div>
+
+<!-- Razorpay Checkout Script -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <script>
     function updateTotal() {
@@ -72,6 +78,160 @@
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('startDate').setAttribute('min', today);
     });
+
+    // Handle form submission with Razorpay
+    document.getElementById('bookingForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        // Get form data
+        const packageId = document.querySelector('.total-price').getAttribute('data-package-id');
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const phone = document.getElementById('phone').value;
+        const travellers = document.getElementById('travellers').value;
+        const startDate = document.getElementById('startDate').value;
+
+        // Show loader
+        document.getElementById('buttonText').style.display = 'none';
+        document.getElementById('buttonLoader').style.display = 'inline';
+        document.getElementById('payButton').disabled = true;
+
+        try {
+            // Create Razorpay order
+            const response = await fetch('/api/payment/create-order', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    packageId: packageId,
+                    travellers: travellers
+                })
+            });
+
+            const orderData = await response.json();
+
+            if (!orderData.success) {
+                alert(orderData.message || 'Failed to create payment order');
+                resetButton();
+                return;
+            }
+
+            // Initialize Razorpay Checkout
+            const options = {
+                key: orderData.keyId,
+                amount: orderData.amount * 100, // Amount in paise
+                currency: orderData.currency,
+                name: 'JourneySphere',
+                description: orderData.packageTitle,
+                order_id: orderData.orderId,
+                handler: async function(response) {
+                    // Payment successful - verify on backend
+                    await verifyPayment(response, {
+                        packageId,
+                        name,
+                        email,
+                        phone,
+                        travellers,
+                        startDate
+                    });
+                },
+                prefill: {
+                    name: name,
+                    email: email,
+                    contact: phone
+                },
+                notes: {
+                    package: orderData.packageTitle
+                },
+                theme: {
+                    color: '#007bff'
+                },
+                modal: {
+                    ondismiss: function() {
+                        // User closed payment modal
+                        resetButton();
+                    }
+                }
+            };
+
+            const razorpay = new Razorpay(options);
+            
+            razorpay.on('payment.failed', async function(response) {
+                // Payment failed
+                alert('Payment failed. Please try again.');
+                await handlePaymentFailure(orderData.orderId, {
+                    packageId,
+                    name,
+                    email,
+                    phone,
+                    travellers,
+                    startDate
+                });
+                resetButton();
+            });
+
+            razorpay.open();
+            resetButton();
+
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Something went wrong. Please try again.');
+            resetButton();
+        }
+    });
+
+    async function verifyPayment(paymentResponse, bookingDetails) {
+        try {
+            const response = await fetch('/api/payment/verify-payment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    razorpay_order_id: paymentResponse.razorpay_order_id,
+                    razorpay_payment_id: paymentResponse.razorpay_payment_id,
+                    razorpay_signature: paymentResponse.razorpay_signature,
+                    bookingDetails: bookingDetails
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                alert('🎉 ' + result.message);
+                window.location.href = '/user-dashboard';
+            } else {
+                alert('Payment verification failed: ' + result.message);
+            }
+        } catch (error) {
+            console.error('Error verifying payment:', error);
+            alert('Failed to verify payment. Please contact support.');
+        }
+    }
+
+    async function handlePaymentFailure(orderId, bookingDetails) {
+        try {
+            await fetch('/api/payment/payment-failed', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    orderId: orderId,
+                    bookingDetails: bookingDetails
+                })
+            });
+        } catch (error) {
+            console.error('Error handling payment failure:', error);
+        }
+    }
+
+    function resetButton() {
+        document.getElementById('buttonText').style.display = 'inline';
+        document.getElementById('buttonLoader').style.display = 'none';
+        document.getElementById('payButton').disabled = false;
+    }
 </script>
 
 <%- include('partials/footer') %>

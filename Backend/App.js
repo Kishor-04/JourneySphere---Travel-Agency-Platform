@@ -9,6 +9,7 @@ const MongoConn = require("./MongoConn");
 const authRoutes = require('./Routes/auth');
 const packageRoutes = require('./Routes/package');
 const bookingRoutes = require('./Routes/bookings');
+const paymentRoutes = require('./Routes/payment');
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -45,6 +46,7 @@ app.use((req, res, next) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/packages', packageRoutes);
 app.use('/api/bookings', bookingRoutes);
+app.use('/api/payment', paymentRoutes);
 
 // View Routes
 const viewRoutes = require('./Routes/viewRoutes');
