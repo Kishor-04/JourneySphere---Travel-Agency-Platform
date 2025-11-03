@@ -6,13 +6,47 @@
         <p>Manage your bookings and discover new destinations</p>
     </header>
 
+    <!-- Search Packages -->
+    <section class="search-section">
+        <h2>Find Your Perfect Destination</h2>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search by destination, title..." />
+            <button onclick="searchPackages()" class="search-btn">Search</button>
+        </div>
+    </section>
+
+    <!-- Available Packages -->
+    <section class="packages-section">
+        <h2>Available Packages (<span id="packageCount"><%= packages.length %></span>)</h2>
+        
+        <div class="packages-flex" id="packagesGrid">
+            <% packages.forEach(pkg => { %>
+                <div class="destination-card" data-title="<%= pkg.title.toLowerCase() %>" data-location="<%= pkg.location.toLowerCase() %>">
+                    <% if (pkg.imageUrl) { %>
+                        <div class="card-image" style="background-image: url('<%= pkg.imageUrl %>');"></div>
+                    <% } %>
+                    <div class="card-content">
+                        <h3><%= pkg.title %></h3>
+                        <p class="description"><%= pkg.description %></p>
+                        <div class="package-details">
+                            <span class="location">📍 <%= pkg.location %></span>
+                            <span class="duration">⏱️ <%= pkg.days %> days</span>
+                            <span class="price">💰 ₹<%= pkg.price.toLocaleString() %></span>
+                        </div>
+                        <a href="/booking-form/<%= pkg._id %>" class="book-now-btn">Book Now</a>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    </section>
+
     <!-- My Bookings Section -->
     <section class="bookings-section">
         <h2>My Bookings (<%= bookings.length %>)</h2>
         
         <% if (bookings.length === 0) { %>
             <div class="empty-state">
-                <p>You haven't made any bookings yet. Explore our packages below!</p>
+                <p>You haven't made any bookings yet. Explore our packages above!</p>
             </div>
         <% } else { %>
             <div class="bookings-list">
@@ -43,40 +77,6 @@
                 <% }); %>
             </div>
         <% } %>
-    </section>
-
-    <!-- Search Packages -->
-    <section class="search-section">
-        <h2>Find More Destinations</h2>
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Search by destination, title..." />
-            <button onclick="searchPackages()" class="search-btn">Search</button>
-        </div>
-    </section>
-
-    <!-- Available Packages -->
-    <section class="packages-section">
-        <h2>Available Packages (<span id="packageCount"><%= packages.length %></span>)</h2>
-        
-        <div class="packages-flex" id="packagesGrid">
-            <% packages.forEach(pkg => { %>
-                <div class="destination-card" data-title="<%= pkg.title.toLowerCase() %>" data-location="<%= pkg.location.toLowerCase() %>">
-                    <% if (pkg.imageUrl) { %>
-                        <div class="card-image" style="background-image: url('<%= pkg.imageUrl %>');"></div>
-                    <% } %>
-                    <div class="card-content">
-                        <h3><%= pkg.title %></h3>
-                        <p class="description"><%= pkg.description %></p>
-                        <div class="package-details">
-                            <span class="location">📍 <%= pkg.location %></span>
-                            <span class="duration">⏱️ <%= pkg.days %> days</span>
-                            <span class="price">💰 ₹<%= pkg.price.toLocaleString() %></span>
-                        </div>
-                        <a href="/booking-form/<%= pkg._id %>" class="book-now-btn">Book Now</a>
-                    </div>
-                </div>
-            <% }); %>
-        </div>
     </section>
 </div>
 
